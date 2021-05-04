@@ -1,0 +1,25 @@
+#ifndef WHEELSON_NUVOTON_FIRMWARE_INPUTINTERNAL_H
+#define WHEELSON_NUVOTON_FIRMWARE_INPUTINTERNAL_H
+
+/* BASIC SWITCHES PINS*/
+#define SW0		P55
+#define SW1		P52
+#define SW2		P53
+#define SW3		P57
+#define SW4		P54
+#define SW5		P56
+/*  BASIC SWITCHES GPIO MODE    */
+//#define P_Input_Mode P1M1 |= SET_BIT6;P1M2 &= ~SET_BIT6
+#define P52_Input_Mode	P5M1 |= SET_BIT2;P5M2 &= ~SET_BIT2;
+#define P53_Input_Mode	P5M1 |= SET_BIT3;P5M2 &= ~SET_BIT3;
+#define P54_Input_Mode	P5M1 |= SET_BIT4;P5M2 &= ~SET_BIT4;
+#define P55_Input_Mode	P5M1 |= SET_BIT5;P5M2 &= ~SET_BIT5;
+#define P56_Input_Mode	P5M1 |= SET_BIT6;P5M2 &= ~SET_BIT6;
+#define P57_Input_Mode	P5M1 |= SET_BIT7;P5M2 &= ~SET_BIT7;
+/*  SCHMITT TRIGGER INPUT FOR DEBOUNCING*/
+#define SW_SCHMITT_TRIGGER_INPUT P5S &= 0x00;P5S |= 0xFC;
+
+#define SWITCHES_PIN_INIT()	do{	P52_Input_Mode; P53_Input_Mode; P54_Input_Mode; P55_Input_Mode; \
+								P56_Input_Mode; P57_Input_Mode; SW_SCHMITT_TRIGGER_INPUT; }while(0);
+
+#endif //WHEELSON_NUVOTON_FIRMWARE_INPUTINTERNAL_H
