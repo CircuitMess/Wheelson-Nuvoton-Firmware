@@ -246,10 +246,13 @@ void main(void){
 
 	initI2C();
 
-	setBacklight(true);
-	setHeadlight(0xFF);
+	//setBacklight(false);
+	//setHeadlight(0);
 
-	//setMotorState(0x02, 0xAA);
+	/*setMotorState(0x00, 0x55);
+	setMotorState(0x01, 0x55);
+	setMotorState(0x02, 0x55);
+	setMotorState(0x03, 0x55);*/
 
 	for(;;){
 
