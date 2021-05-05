@@ -19,16 +19,3 @@
 
 void initI2C();
 
-enum dataReceived{
-	identify,
-	reset,
-	set_backLight,
-	get_backlight,
-	set_headlight,
-	get_headlight,
-	set_motor,
-	get_motor,
-	get_num_events,
-	get_events,
-	null
-}dataRec = null;
