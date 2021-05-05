@@ -32,8 +32,7 @@ void inputScan(){
 
 		switchEvent |= 0x01;
 		pushEvent(0x00, 1);
-	}
-	else if(SW0 && (switchEvent & 0x01)){
+	}else if(SW0 && (switchEvent & 0x01)){
 
 		switchEvent &= 0xFE;
 		pushEvent(0x00, 0);
@@ -44,54 +43,49 @@ void inputScan(){
 		switchEvent |= 0x02;
 		pushEvent(0x01, 1);
 
-	}
-	else if(SW1 && (switchEvent & 0x02)){
+	}else if(SW1 && (switchEvent & 0x02)){
 
 		switchEvent &= 0xFD;
 		pushEvent(0x01, 0);
 	}
-	if(!SW2 && !(switchEvent & 0x01)){
+	if(!SW2 && !(switchEvent & 0x04)){
 
-		switchEvent |= 0x03;
+		switchEvent |= 0x04;
 		pushEvent(0x02, 1);
-	}
-	else if(SW2 && (switchEvent & 0x01)){
+	}else if(SW2 && (switchEvent & 0x04)){
 
-		switchEvent &= 0xFC;
+		switchEvent &= 0xFB;
 		pushEvent(0x02, 0);
 	}
 
-	if(!SW3 && !(switchEvent & 0x02)){
+	if(!SW3 && !(switchEvent & 0x08)){
 
-		switchEvent |= 0x04;
+		switchEvent |= 0x08;
 		pushEvent(0x03, 1);
 
-	}
-	else if(SW3 && (switchEvent & 0x02)){
+	}else if(SW3 && (switchEvent & 0x08)){
 
-		switchEvent &= 0xFB;
+		switchEvent &= 0xF7;
 		pushEvent(0x03, 0);
 	}
-	if(!SW4 && !(switchEvent & 0x01)){
+	if(!SW4 && !(switchEvent & 0x10)){
 
-		switchEvent |= 0x05;
+		switchEvent |= 0x10;
 		pushEvent(0x04, 1);
-	}
-	else if(SW4 && (switchEvent & 0x01)){
+	}else if(SW4 && (switchEvent & 0x10)){
 
-		switchEvent &= 0xFA;
+		switchEvent &= 0xEF;
 		pushEvent(0x04, 0);
 	}
 
-	if(!SW5 && !(switchEvent & 0x02)){
+	if(!SW5 && !(switchEvent & 0x20)){
 
-		switchEvent |= 0x06;
+		switchEvent |= 0x20;
 		pushEvent(0x05, 1);
 
-	}
-	else if(SW5 && (switchEvent & 0x02)){
+	}else if(SW5 && (switchEvent & 0x20)){
 
-		switchEvent &= 0xF9;
+		switchEvent &= 0xDF;
 		pushEvent(0x05, 0);
 	}
 
