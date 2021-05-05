@@ -3,7 +3,10 @@
 #include "N76E616.h"
 #include "Define.h"
 
+/*
 __far uint8_t headlight = 0x00;
+__far bool backlight = false;
+*/
 
 void LEDInit(){
 
@@ -22,12 +25,10 @@ bool getBacklight(){
 
 void setHeadlight(uint8_t _headlight){
 
-	headlight = _headlight;
 	HEAD_LIGHT = _headlight;
 }
 
 uint8_t getHeadlight(){
 
-
-	return headlight;
+	return HEAD_LIGHT;
 }
