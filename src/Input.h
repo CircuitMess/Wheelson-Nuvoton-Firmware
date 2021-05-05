@@ -1,8 +1,12 @@
 #ifndef WHEELSON_NUVOTON_FIRMWARE_INPUT_H
 #define WHEELSON_NUVOTON_FIRMWARE_INPUT_H
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include "bool.h"
+
+#define MAX_NODES 20
 
 struct InputEvent{
 
