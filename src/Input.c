@@ -1,13 +1,9 @@
 #include "Input.h"
 #include "InputInternal.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include "N76E616.h"
 #include "define.h"
 #include "SFR_Macro.h"
 #include "bool.h"
-
-#define MAX_NODES 40
 
 __near uint8_t switchEvent = 0x00;
 
@@ -16,10 +12,9 @@ __near uint8_t nodeNum = 0;
 struct InputEvent *__near lastNode = NULL;
 
 __far struct InputEvent nodes[MAX_NODES];
+
 uint8_t head = 0;
 uint8_t foot = 0;
-
-
 
 void inputInit(){
 
@@ -108,18 +103,65 @@ struct InputEvent *giveNode(){
 
 uint8_t getNumEvents(){
 
+	if(head > foot){
 
-	return 0;
+		return (head - foot);
+
+	}else if (head < foot){
+
+		return (MAX_NODES - (foot - head));
+	}
+	else{
+		return 0;
+	}
+
 }
 
-void pushEvent(uint8_t id, bool s){
-id;
-s;
+void pushEvent(uint8_t _id, bool _state){
+
+	clr_EA;
+
+	struct InputEvent *newNode;
+
+	newNode = giveNode();
+	if(!newNode){
+		set_EA;
+		return;
+	}
+
+	newNode->id = _id;
+	newNode->state = _state;
+	newNode->nextNode = NULL;
+
+	if(!rootNode){
+		rootNode = lastNode = newNode;
+	}else{
+
+		lastNode->nextNode = newNode;
+		lastNode = newNode;
+	}
+
+	set_EA;
 
 }
 
 struct InputEvent *popEvent(){
 
+	struct InputEvent *eventNode = NULL;
+
+	if(!rootNode){
+		return NULL;
+	}
+
+	if(rootNode == lastNode){
+		lastNode = NULL;
+	}
 
 
+	eventNode = rootNode;
+	rootNode = rootNode->nextNode;
+
+	foot = (foot + 1) % MAX_NODES;
+
+	return eventNode;
 }
