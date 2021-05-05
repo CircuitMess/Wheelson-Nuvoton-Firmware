@@ -18,7 +18,7 @@ void motorInit(){
 
 void setMotorState(uint8_t id, int8_t s){
 
-	//clr_EA;
+	clr_EA;
 
 	state[id] = s;
 
@@ -126,7 +126,7 @@ void setMotorState(uint8_t id, int8_t s){
 			break;
 	}
 
-	//set_EA;
+	set_EA;
 }
 
 int8_t getMotorState(uint8_t id){
