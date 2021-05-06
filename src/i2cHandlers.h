@@ -1,0 +1,8 @@
+#ifndef WHEELSON_NUVOTON_FIRMWARE_I2CHANDLERS_H
+#define WHEELSON_NUVOTON_FIRMWARE_I2CHANDLERS_H
+
+#include <stdint.h>
+
+void toggleBacklight(uint8_t* params);
+
+#endif //WHEELSON_NUVOTON_FIRMWARE_I2CHANDLERS_H
