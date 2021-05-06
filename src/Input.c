@@ -1,7 +1,7 @@
 #include "Input.h"
 #include "InputInternal.h"
 #include "N76E616.h"
-#include "define.h"
+#include <Define.h>
 #include "SFR_Macro.h"
 #include "bool.h"
 
