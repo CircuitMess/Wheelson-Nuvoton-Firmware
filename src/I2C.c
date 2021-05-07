@@ -105,11 +105,11 @@ void I2C_ISR(void) __interrupt(6)
 					break;
 				}
 
+				AA = 1;
+
 				if(command->params == 0){
-					AA = 0;
 					command->func(NULL);
 				}else{
-					AA = 1;
 					currentCommand = command;
 					dataLeft = command->params;
 					i2cState = RECEIVE;
@@ -120,15 +120,10 @@ void I2C_ISR(void) __interrupt(6)
 					break;
 				}
 
-				// just received last byte
-				if(dataLeft == 1){
-					AA = 0;
-				}else{
-					AA = 1;
-				}
-
 				data[currentCommand->params - dataLeft] = I2DAT;
 				dataLeft--;
+
+				AA = 1;
 
 				if(dataLeft == 0){
 					currentCommand->func(data);
