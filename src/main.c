@@ -1,22 +1,26 @@
-#include "N76E616.h"
-#include "Version.h"
-#include "Typedef.h"
-#include "Define.h"
-#include "SFR_Macro.h"
-#include "Common.h"
-#include "Delay.h"
+#include <N76E616.h>
+#include <Version.h>
+#include <Typedef.h>
+#include <Define.h>
+#include <SFR_Macro.h>
+#include <Common.h>
+#include <Delay.h>
 #include "I2C.h"
 #include "Motors.h"
 #include "LEDs.h"
 #include "Input.h"
-#include "I2C.h"
 #include "i2cHandlers.h"
+#include "io.h"
 
 __near const struct i2cCommand Commands[] = {
-		{ 0x00, 0, toggleBacklight }
+		{ 0x00, 2, saveData },
+		{ 0x01, 0, loadData }
 };
 
 void main(void){
+	initUART(9600);
+
+	print("Initialized\n\r");
 
 	//inputInit();
 	LEDInit();
@@ -33,7 +37,6 @@ void main(void){
 	setMotorState(0x03, 0x55);*/
 
 	for(;;){
-
 		// bus error state handle
 		while(SI != 0){
 			if(I2STAT == 0x00){

@@ -7,45 +7,19 @@
 #include <bool.h>
 #include <string.h>
 #include "LEDs.h"
+#include "io.h"
 
-extern void print(char* data);
-extern int inthappened;
-
-uint8_t numCommands = 0;
+__near uint8_t numCommands = 0;
 const struct i2cCommand* commands = NULL;
 
 __near enum { WAIT, RECEIVE, SEND } i2cState = WAIT;
-uint8_t data[MAX_DATA];
-uint8_t dataLeft = 0;
-uint8_t dataSend = 0;
+__near uint8_t data[MAX_DATA];
+__near uint8_t dataLeft = 0;
+__near uint8_t dataSend = 0;
 const struct i2cCommand* currentCommand = NULL;
 
 const struct i2cCommand* getCommand(uint8_t id);
 
-enum dataReceived{
-	identify,
-	reset,
-	set_backlight,
-	get_backlight,
-	set_headlight,
-	get_headlight,
-	set_motor,
-	get_motor,
-	get_num_events,
-	get_events,
-	null
-}dataRec = null;
-
-// __near -> ROM/EPROM/FLASH (18432B)
-// __far  -> EXTERNAL RAM (256B)
-__near uint8_t rxDataCnt = 0;
-__near uint8_t txDataCnt = 0;
-__near bool lastDataTx = false;
-__near bool lastDataRx = false;
-__near uint8_t motorID = 0;
-__near int8_t motorState = 0;
-__near uint8_t numEvents = 0;
-struct InputEvent *__near event = NULL;
 
 void i2cInit(const struct i2cCommand* _commands, uint8_t _numCommands){
 	commands = _commands;
@@ -77,7 +51,7 @@ void i2cRespond(uint8_t* _data, uint8_t count){
 	if(count > MAX_DATA) return;
 
 	memcpy(data, _data, count);
-	dataSend = count;
+	dataSend = dataLeft = count;
 	i2cState = SEND;
 }
 
@@ -90,12 +64,23 @@ const struct i2cCommand* getCommand(uint8_t id){
 }
 
 // I2C Interrupt Routine
-void I2C_ISR(void) __interrupt(7)
+void I2C_ISR(void) __interrupt(6)
 {
 	const struct i2cCommand* command = NULL;
-	inthappened = 1;
 
-	setBacklight(!getBacklight());
+	/*if(I2STAT >= 100){
+		putchar(I2STAT / 100 + '0');
+		putchar((I2STAT / 10) - ((I2STAT / 100) * 100) / 10 + '0');
+		putchar(I2STAT - (I2STAT / 10) * 10 + '0');
+	}else if(I2STAT >= 10){
+		putchar((I2STAT / 10) + '0');
+		putchar(I2STAT - (I2STAT / 10) * 10 + '0');
+	}else{
+		putchar(I2STAT);
+	}
+	print(" - ");
+	putchar(I2DAT + '0');
+	print("\n\r");*/
 
 	switch (I2STAT)
 	{
@@ -113,144 +98,49 @@ void I2C_ISR(void) __interrupt(7)
 			break;
 
 		case 0x80://  slave receive data ACK
-			if(I2DAT == 0){
-				setBacklight(!getBacklight());
-			}
+			if(i2cState == WAIT){
+				command = getCommand(I2DAT);
+				if(command == NULL){
+					AA = 0;
+					break;
+				}
 
-			command = getCommand(I2DAT);
-			if(command != NULL){
 				if(command->params == 0){
+					AA = 0;
 					command->func(NULL);
-					AA = 0; // Acknowledge assert
 				}else{
+					AA = 1;
 					currentCommand = command;
 					dataLeft = command->params;
 					i2cState = RECEIVE;
+				}
+			}else if(i2cState == RECEIVE){
+				if(dataLeft == 0){
+					AA = 0;
+					break;
+				}
+
+				// just received last byte
+				if(dataLeft == 1){
+					AA = 0;
+				}else{
 					AA = 1;
 				}
-			}else{
-				AA = 0;
-			}
 
-			/*if(I2DAT == ID_VERIFICATION){
+				data[currentCommand->params - dataLeft] = I2DAT;
+				dataLeft--;
 
-				dataRec = identify;
-				lastDataRx = true;
-			}
-			else if(I2DAT == RESET_COMMAND){
-
-				dataRec = reset;
-				TA = 0x0AA;
-				TA = 0x55;
-				CHPCON |= 0x80;
-
-				lastDataRx = true;
-			}
-			else if(I2DAT == SET_BACKLIGHT){
-
-				dataRec = set_backlight;
-				lastDataRx = true;
-			}
-			else if(I2DAT == GET_BACKLIGHT){
-
-				dataRec = get_backlight;
-				lastDataRx = true;
-			}
-			else if(I2DAT == SET_HEADLIGHT){
-
-				dataRec = set_headlight;
-				lastDataRx = true;
-			}
-			else if(I2DAT == GET_HEADLIGHT){
-
-				dataRec = get_headlight;
-				lastDataRx = true;
-			}
-			else if(I2DAT == SET_MOTOR || dataRec == set_motor){
-
-				if(rxDataCnt >= 1){
-					motorState = I2DAT;
-					rxDataCnt = 0;
-					lastDataRx = true;
+				if(dataLeft == 0){
+					currentCommand->func(data);
+					currentCommand = 0;
+					i2cState = WAIT;
 				}
-				else{
-					dataRec = set_motor;
-					rxDataCnt++;
-					lastDataRx = false;
-				}
-
 			}
-			else if(I2DAT == GET_MOTOR){
-
-				dataRec = get_motor;
-				lastDataRx = true;
-			}
-			else if(I2DAT == NUM_EVENTS){
-
-				dataRec = get_num_events;
-				lastDataRx = true;
-			}
-			else if(I2DAT == EVENT_HANDLER){
-
-				dataRec = get_events;
-				lastDataRx = true;
-			}
-
-
-			 if(lastDataRx){
-				AA = 0;
-				lastDataRx = false;
-			}
-			else{
-				AA = 1;
-			}
-
-			 */
 
 			break;
 
 		case 0x88://  slave receive data NACK
-			if(i2cState != RECEIVE || dataLeft == 0){
-				AA = 0;
-				break;
-			}
-
-			data[currentCommand->params - dataLeft] = I2DAT;
-			dataLeft--;
-
-			if(dataLeft == 0){
-				currentCommand->func(data);
-				AA = 1;
-				currentCommand = 0;
-				i2cState = WAIT;
-			}else{
-				AA = 0;
-			}
-
-			/*if(dataRec == set_backlight){
-
-				setBacklight(I2DAT);
-			}
-			else if(dataRec == set_headlight){
-
-				setHeadlight(I2DAT);
-			}
-			else if(dataRec == get_motor){
-
-				motorID = I2DAT;
-			}
-			else if(dataRec == set_motor){
-
-				motorState = I2DAT;
-				setMotorState(motorID, motorState);
-				motorState = motorID = 0;
-			}
-			else if(dataRec == get_events){
-
-				numEvents = I2DAT;
-			}
-
-			AA = 1;*/
+			AA = 0;
 			break;
 
 		case 0xA0://  slave transmit repeat start or stop
@@ -258,13 +148,16 @@ void I2C_ISR(void) __interrupt(7)
 			break;
 
 		case 0xA8://  slave transmit address ACK
-			I2DAT = SLAVE_ADDR;
-			AA = 1;
-			break;
+			if(i2cState != SEND || dataLeft == 0){
+				AA = 0;
+				break;
+			}
+
+			// purposely no break
 
 		case 0xB8://  slave transmit data ACK
 			if(i2cState != SEND || dataLeft == 0){
-				AA = 0; // 1 of more data pending
+				AA = 0;
 				break;
 			}
 
@@ -278,59 +171,6 @@ void I2C_ISR(void) __interrupt(7)
 				AA = 1;
 			}
 
-			/*if(dataRec == identify){
-				I2DAT = SLAVE_ADDR;
-				dataRec = null;
-				lastDataTx = true;
-			}
-			else if(dataRec == get_backlight){
-				I2DAT = getBacklight();
-				dataRec = null;
-				lastDataTx = true;
-			}
-			else if(dataRec == get_headlight){
-				I2DAT = getHeadlight();
-				dataRec = null;
-				lastDataTx = true;
-			}
-			else if(dataRec == get_motor){
-				I2DAT = getMotorState(motorID);
-				dataRec = null;
-				lastDataTx = true;
-			}
-			else if(dataRec == get_num_events){
-				I2DAT = getNumEvents();
-				dataRec = null;
-				lastDataTx = true;
-			}
-
-			else if(dataRec == get_events){
-
-				if(txDataCnt >= numEvents){
-
-					lastDataTx = true;
-					txDataCnt = 0;
-					numEvents = 0;
-					dataRec = null;
-				}
-				else{
-
-					event = popEvent();
-					I2DAT = (((event->i2cState)<<7) & 0x80) | (event->id);
-					event = NULL;
-
-					lastDataTx = false;
-					++txDataCnt;
-				}
-			}
-
-			if(lastDataTx){
-				AA = 0;
-				lastDataTx = false;
-			}
-			else{
-				AA = 1;
-			}*/
 			break;
 
 		case 0xC0://  slave transmit data NACK
