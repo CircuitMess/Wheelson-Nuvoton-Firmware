@@ -12,9 +12,17 @@
 #include "i2cHandlers.h"
 #include "io.h"
 
-__near const struct i2cCommand Commands[] = {
-		{ 0x00, 2, saveData },
-		{ 0x01, 0, loadData }
+__far const struct i2cCommand Commands[] = {
+		{ 0x00, 0, identify },
+		{ 0x01, 0, reset },
+		{ 0x20, 1, backlightSet },
+		{ 0x21, 0, backlightGet },
+		{ 0x22, 1, headlightSet },
+		{ 0x23, 0, headlightGet },
+		{ 0x30, 2, motorSet },
+		{ 0x31, 1, motorGet },
+		{ 0x40, 0, numEvents },
+		{ 0x41, 1, events }
 };
 
 void main(void){
@@ -22,7 +30,7 @@ void main(void){
 
 	print("Initialized\n\r");
 
-	//inputInit();
+	inputInit();
 	LEDInit();
 	motorInit();
 

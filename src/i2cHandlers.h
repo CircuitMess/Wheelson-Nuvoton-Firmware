@@ -3,7 +3,15 @@
 
 #include <stdint.h>
 
-void saveData(uint8_t* params);
-void loadData(uint8_t* params);
+void identify(uint8_t* params);
+void reset(uint8_t* params);
+void backlightSet(uint8_t* params);
+void backlightGet(uint8_t* params);
+void headlightSet(uint8_t* params);
+void headlightGet(uint8_t* params);
+void motorSet(uint8_t* params);
+void motorGet(uint8_t* params);
+void numEvents(uint8_t* params);
+void events(uint8_t* params);
 
 #endif //WHEELSON_NUVOTON_FIRMWARE_I2CHANDLERS_H

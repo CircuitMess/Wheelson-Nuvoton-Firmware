@@ -1,20 +1,61 @@
+#include <N76E616.h>
 #include "i2cHandlers.h"
 #include "I2C.h"
 #include "io.h"
+#include "LEDs.h"
+#include "Motors.h"
+#include "Input.h"
 
-uint8_t savedData[2];
-
-void saveData(uint8_t* params){
-	savedData[0] = params[0];
-	savedData[1] = params[1];
-
-	print("read ");
-	putchar(savedData[0] + '0');
-	print(" ");
-	putchar(savedData[1] + '0');
-	print("\n\r");
+void identify(uint8_t* params){
+	uint8_t data[] = { SLAVE_ADDR };
+	i2cRespond(data, sizeof(data));
 }
 
-void loadData(uint8_t* params){
-	i2cRespond(savedData, 2);
+void reset(uint8_t* params){
+	TA = 0x0AA;
+	TA = 0x55;
+	CHPCON |= 0x80;
+}
+
+void backlightSet(uint8_t* params){
+	setBacklight(params[0]);
+}
+
+void backlightGet(uint8_t* params){
+	uint8_t data[] = { getBacklight() };
+	i2cRespond(data, sizeof(data));
+}
+
+void headlightSet(uint8_t* params){
+	setHeadlight(params[0]);
+}
+
+void headlightGet(uint8_t* params){
+	uint8_t data[] = { getHeadlight() };
+	i2cRespond(data, sizeof(data));
+}
+
+void motorSet(uint8_t* params){
+	setMotorState(params[0], ((int8_t*) params)[1]);
+}
+
+void motorGet(uint8_t* params){
+	int8_t data[] = { getMotorState(params[0]) };
+	i2cRespond(data, sizeof(data));
+}
+
+void numEvents(uint8_t* params){
+	int8_t data[] = { getNumEvents() };
+	i2cRespond(data, sizeof(data));
+}
+
+__far uint8_t eventNodes[MAX_NODES];
+
+void events(uint8_t* params){
+	uint8_t numEvents = params[0];
+	for(int i = 0; i < numEvents; i++){
+		struct InputEvent* event = popEvent();
+		eventNodes[i] = (((event->state)<<7) & 0x80) | (event->id);
+	}
+	i2cRespond(eventNodes, numEvents);
 }
