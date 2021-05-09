@@ -126,9 +126,9 @@ void I2C_ISR(void) __interrupt(6)
 				AA = 1;
 
 				if(dataLeft == 0){
+					i2cState = WAIT;
 					currentCommand->func(data);
 					currentCommand = 0;
-					i2cState = WAIT;
 				}
 			}
 
