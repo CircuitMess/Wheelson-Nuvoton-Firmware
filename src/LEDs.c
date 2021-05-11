@@ -3,32 +3,22 @@
 #include "N76E616.h"
 #include "Define.h"
 
-/*
-__far uint8_t headlight = 0x00;
-__far bool backlight = false;
-*/
-
 void LEDInit(){
-
 	LED_PIN_INIT();
 }
 
-void setBacklight(bool _backlight){
-
-	TFT_BACKLIGHT = _backlight;
+void setBacklight(bool backlight){
+	TFT_BACKLIGHT = !backlight;
 }
 
 bool getBacklight(){
-
-	return TFT_BACKLIGHT;
+	return !TFT_BACKLIGHT;
 }
 
-void setHeadlight(uint8_t _headlight){
-
-	HEAD_LIGHT = _headlight;
+void setHeadlight(uint8_t headlight){
+	HEAD_LIGHT = !headlight;
 }
 
 uint8_t getHeadlight(){
-
-	return HEAD_LIGHT;
+	return !HEAD_LIGHT;
 }

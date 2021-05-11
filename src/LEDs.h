@@ -7,10 +7,10 @@
 
 void LEDInit();
 
-void setBacklight(bool _backlight);
+void setBacklight(bool backlight);
 bool getBacklight();
 
-void setHeadlight(uint8_t _headlight);
+void setHeadlight(uint8_t headlight);
 uint8_t getHeadlight();
 
 
