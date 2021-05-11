@@ -37,7 +37,7 @@ void main(void){
 	i2cInit(Commands, sizeof(Commands) / sizeof(Commands[0]));
 
 	setBacklight(false);
-	//setHeadlight(0);
+	setHeadlight(false);
 
 	/*setMotorState(0x00, 0x55);
 	setMotorState(0x01, 0x55);
