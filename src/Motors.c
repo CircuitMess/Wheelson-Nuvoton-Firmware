@@ -20,6 +20,10 @@ void setMotorState(uint8_t id, int8_t s){
 
 	clr_EA;
 
+	if(id >= 2){
+		s *= -1;
+	}
+
 	state[id] = s;
 
 	switch(id){
