@@ -5,8 +5,6 @@
 #include "SFR_Macro.h"
 #include "bool.h"
 
-__near uint8_t switchEvent = 0x00;
-
 struct InputEvent *__near rootNode = NULL;
 __near uint8_t nodeNum = 0;
 struct InputEvent *__near lastNode = NULL;
@@ -16,6 +14,10 @@ __far struct InputEvent nodes[MAX_NODES];
 uint8_t head = 0;
 uint8_t foot = 0;
 
+__far uint16_t btnEventCounter[BTN_NUM] = {0};
+__far uint8_t btnState[BTN_NUM] = {0};
+
+
 void inputInit(){
 
 	SWITCHES_PIN_INIT();
@@ -23,65 +25,45 @@ void inputInit(){
 
 void inputScan(){
 
-	if(!SW0 && !(switchEvent & 0x01)){
-
-		switchEvent |= 0x01;
-		pushEvent(0x00, 1);
-	}else if(SW0 && (switchEvent & 0x01)){
-
-		switchEvent &= 0xFE;
-		pushEvent(0x00, 0);
+	if(!SW0){
+		btnPress(0);
+	}else if(SW0){
+		btnRelease(0);
 	}
 
-	if(!SW1 && !(switchEvent & 0x02)){
+	if(!SW1){
+		btnPress(1);
 
-		switchEvent |= 0x02;
-		pushEvent(0x01, 1);
-
-	}else if(SW1 && (switchEvent & 0x02)){
-
-		switchEvent &= 0xFD;
-		pushEvent(0x01, 0);
-	}
-	if(!SW2 && !(switchEvent & 0x04)){
-
-		switchEvent |= 0x04;
-		pushEvent(0x02, 1);
-	}else if(SW2 && (switchEvent & 0x04)){
-
-		switchEvent &= 0xFB;
-		pushEvent(0x02, 0);
+	}else if(SW1){
+		btnRelease(1);
 	}
 
-	if(!SW3 && !(switchEvent & 0x08)){
+	if(!SW2){
+		btnPress(2);
 
-		switchEvent |= 0x08;
-		pushEvent(0x03, 1);
-
-	}else if(SW3 && (switchEvent & 0x08)){
-
-		switchEvent &= 0xF7;
-		pushEvent(0x03, 0);
-	}
-	if(!SW4 && !(switchEvent & 0x10)){
-
-		switchEvent |= 0x10;
-		pushEvent(0x04, 1);
-	}else if(SW4 && (switchEvent & 0x10)){
-
-		switchEvent &= 0xEF;
-		pushEvent(0x04, 0);
+	}else if(SW2){
+		btnRelease(2);
 	}
 
-	if(!SW5 && !(switchEvent & 0x20)){
+	if(!SW3){
+		btnPress(3);
 
-		switchEvent |= 0x20;
-		pushEvent(0x05, 1);
+	}else if(SW3){
+		btnRelease(3);
+	}
 
-	}else if(SW5 && (switchEvent & 0x20)){
+	if(!SW4){
+		btnPress(4);
 
-		switchEvent &= 0xDF;
-		pushEvent(0x05, 0);
+	}else if(SW4){
+		btnRelease(4);
+	}
+
+	if(!SW5){
+		btnPress(5);
+
+	}else if(SW5){
+		btnRelease(5);
 	}
 
 }
@@ -164,4 +146,28 @@ struct InputEvent *popEvent(){
 	foot = (foot + 1) % MAX_NODES;
 
 	return eventNode;
+}
+
+void btnPress(uint8_t id){
+
+	if(btnEventCounter[id] < DEBOUNCE_TIME){
+		++btnEventCounter[id];
+
+		if((btnEventCounter[id] >= DEBOUNCE_TIME) && !btnState[id]){
+			pushEvent(id, 1);
+			btnState[id] = 1;
+		}
+	}
+}
+
+void btnRelease(uint8_t id){
+
+	if(btnEventCounter[id] > 0){
+		--btnEventCounter[id];
+
+		if((btnEventCounter[id] <= 0) && btnState[id]){
+			pushEvent(id, 0);
+			btnState[id] = 0;
+		}
+	}
 }

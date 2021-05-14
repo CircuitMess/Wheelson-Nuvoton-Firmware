@@ -7,6 +7,9 @@
 
 #define MAX_NODES 20
 
+#define BTN_NUM 6
+#define DEBOUNCE_TIME 500
+
 struct InputEvent{
 
 	uint8_t id;
@@ -22,8 +25,10 @@ struct InputEvent *giveNode();
 
 uint8_t getNumEvents();
 
-void pushEvent(uint8_t id, bool s);
+void pushEvent(uint8_t _id, bool _state);
 struct InputEvent *popEvent();
 
+void btnPress(uint8_t id);
+void btnRelease(uint8_t id);
 
 #endif //WHEELSON_NUVOTON_FIRMWARE_INPUT_H
