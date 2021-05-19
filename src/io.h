@@ -13,5 +13,6 @@ void print(char* data);
  */
 void initUART(UINT32 baud);
 
+char* itoa(int value, char* buffer, int base);
 
 #endif //WHEELSON_NUVOTON_FIRMWARE_IO_H
