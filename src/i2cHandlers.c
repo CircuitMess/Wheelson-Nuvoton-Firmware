@@ -5,6 +5,7 @@
 #include "LEDs.h"
 #include "Motors.h"
 #include "Input.h"
+#include "Battery.h"
 
 void identify(uint8_t* params){
 	uint8_t data[] = { SLAVE_ADDR };
@@ -58,4 +59,9 @@ void events(uint8_t* params){
 		eventNodes[i] = (((event->state)<<7) & 0x80) | (event->id);
 	}
 	i2cRespond(eventNodes, numEvents);
+}
+
+void batteryLevel(uint8_t* params){
+	uint16_t battery = getBatteryReading();
+	i2cRespond(&battery, 2);
 }

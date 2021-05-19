@@ -11,6 +11,7 @@
 #include "Input.h"
 #include "i2cHandlers.h"
 #include "io.h"
+#include "Battery.h"
 
 __far const struct i2cCommand Commands[] = {
 		{ 0x00, 0, identify },
@@ -22,7 +23,8 @@ __far const struct i2cCommand Commands[] = {
 		{ 0x30, 2, motorSet },
 		{ 0x31, 1, motorGet },
 		{ 0x40, 0, numEvents },
-		{ 0x41, 1, events }
+		{ 0x41, 1, events },
+		{ 0x50, 1, batteryLevel }
 };
 
 void main(void){
@@ -33,6 +35,7 @@ void main(void){
 	inputInit();
 	LEDInit();
 	motorInit();
+	//batteryInit();
 
 	i2cInit(Commands, sizeof(Commands) / sizeof(Commands[0]));
 
