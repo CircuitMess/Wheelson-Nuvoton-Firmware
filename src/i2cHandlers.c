@@ -74,3 +74,7 @@ void batteryLevel(uint8_t* params){
 	uint16_t battery = getBatteryReading();
 	i2cRespond(&battery, 2);
 }
+
+void shutdown(uint8_t* params){
+	PCON |= 0x02;
+}
