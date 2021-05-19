@@ -76,5 +76,11 @@ void batteryLevel(uint8_t* params){
 }
 
 void shutdown(uint8_t* params){
+	shutDownADC();
+
+	TA = 0x0AA;
+	TA = 0x55;
+	BODCON0 &= 0xFB;	// turn off brown-out reset
+
 	PCON |= 0x02;
 }
