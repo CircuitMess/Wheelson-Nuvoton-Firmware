@@ -34,19 +34,23 @@ void setMotorState(uint8_t id, int8_t s){
 			if(state[id] == 0){
 				R2BH = 0;
 				R2BL = 0;
+				M2_STOP();
 			}
 			else if(state[id] < 0){
-				float dutyCycleLow = 0.5f + (float)(~state[id]+0x01)/127.0f * 0.5f;
+				float dutyCycleLow = (float)(-state[id])/128.0f;
 				float dutyCycleHigh = 1.0f - dutyCycleLow;
-				R2BH = (uint8_t)(255.0f * dutyCycleHigh);
-				R2BL = (uint8_t)(255.0f * dutyCycleLow);
+				R2BL = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleLow);
+				R2BH = 255 - R2BL;
+
+				M2_BACKWARD();
 				START_PWM2B();
 			}
 			else if(state[id] > 0){
-				float dutyCycleHigh = 0.5f + state[id]/127.0f * 0.5f;
+				float dutyCycleHigh = (float)state[id]/127.0f;
 				float dutyCycleLow = 1.0f - dutyCycleHigh;
-				R2BH = (uint8_t)(255.0f * dutyCycleHigh);
-				R2BL = (uint8_t)(255.0f * dutyCycleLow);
+				R2BH = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleHigh);
+				R2BL = 255 - R2BH;
+				M2_FORWARD();
 				START_PWM2B();
 			}
 			break;
@@ -57,22 +61,25 @@ void setMotorState(uint8_t id, int8_t s){
 			if(state[id] == 0){
 				R2AH = 0;
 				R2AL = 0;
+				M1_STOP();
 				break;
 			}
 			else if(state[id] < 0){
 
-				float dutyCycleLow = 0.5f + (float)(~state[id]+0x01)/127.0f * 0.5f;
+				float dutyCycleLow = (float)(-state[id])/128.0f;
 				float dutyCycleHigh = 1.0f - dutyCycleLow;
-				R2AH = (uint8_t)(255.0f * dutyCycleHigh);
-				R2AL = (uint8_t)(255.0f * dutyCycleLow);
+				R2AL = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleLow);
+				R2AH = 255 - R2AL;
+				M1_BACKWARD();
 				START_PWM2A();
 			}
 			else if(state[id] > 0){
 
-				float dutyCycleHigh = 0.5f + state[id]/127.0f * 0.5f;
+				float dutyCycleHigh = (float)state[id]/127.0f;
 				float dutyCycleLow = 1.0f - dutyCycleHigh;
-				R2AH = (uint8_t)(255.0f * dutyCycleHigh);
-				R2AL = (uint8_t)(255.0f * dutyCycleLow);
+				R2AH = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleHigh);
+				R2AL = 255 - R2AH;
+				M1_FORWARD();
 				START_PWM2A();
 			}
 			break;
@@ -83,19 +90,22 @@ void setMotorState(uint8_t id, int8_t s){
 			if(state[id] == 0){
 				R2DH = 0;
 				R2DL = 0;
+				M4_STOP();
 			}
 			else if(state[id] < 0){
-				float dutyCycleLow = 0.5f + (float)(~state[id]+0x01)/127.0f * 0.5f;
+				float dutyCycleLow = -(float)(state[id])/128.0f;
 				float dutyCycleHigh = 1.0f - dutyCycleLow;
-				R2DH = (uint8_t)(255.0f * dutyCycleHigh);
-				R2DL = (uint8_t)(255.0f * dutyCycleLow);
+				R2DL = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleLow);
+				R2DH = 255 - R2DL;
+				M4_BACKWARD();
 				START_PWM2D();
 			}
 			else if(state[id] > 0){
-				float dutyCycleHigh = 0.5f + state[id]/127.0f * 0.5f;
+				float dutyCycleHigh = (float)state[id]/127.0f;
 				float dutyCycleLow = 1.0f - dutyCycleHigh;
-				R2DH = (uint8_t)(255.0f * dutyCycleHigh);
-				R2DL = (uint8_t)(255.0f * dutyCycleLow);
+				R2DH = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleHigh);
+				R2DL = 255 - R2DH;
+				M4_FORWARD();
 				START_PWM2D();
 			}
 			break;
@@ -106,22 +116,25 @@ void setMotorState(uint8_t id, int8_t s){
 			if(state[id] == 0){
 				R2CH = 0;
 				R2CL = 0;
+				M3_STOP();
 				break;
 			}
 			else if(state[id] < 0){
 
-				float dutyCycleLow = 0.5f + (float)(~state[id]+0x01)/127.0f * 0.5f;
+				float dutyCycleLow = (float)(-state[id])/128.0f;
 				float dutyCycleHigh = 1.0f - dutyCycleLow;
-				R2CH = (uint8_t)(255.0f * dutyCycleHigh);
-				R2CL = (uint8_t)(255.0f * dutyCycleLow);
+				R2CL = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleLow);
+				R2CH = 255 - R2CL;
+				M3_BACKWARD();
 				START_PWM2C();
 			}
 			else if(state[id] > 0){
 
-				float dutyCycleHigh = 0.5f + state[id]/127.0f * 0.5f;
+				float dutyCycleHigh = (float)state[id]/127.0f;
 				float dutyCycleLow = 1.0f - dutyCycleHigh;
-				R2CH = (uint8_t)(255.0f * dutyCycleHigh);
-				R2CL = (uint8_t)(255.0f * dutyCycleLow);
+				R2CH = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleHigh);
+				R2CL = 255 - R2CH;
+				M3_FORWARD();
 				START_PWM2C();
 			}
 			break;
