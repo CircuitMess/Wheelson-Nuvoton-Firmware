@@ -13,5 +13,7 @@ bool getBacklight();
 void setHeadlight(uint8_t headlight);
 uint8_t getHeadlight();
 
+void setRGB(uint8_t _rgb);
+uint32_t getRGB();
 
 #endif //WHEELSON_NUVOTON_FIRMWARE_LEDS_H
