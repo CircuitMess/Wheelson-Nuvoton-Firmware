@@ -42,3 +42,7 @@ UINT16 getBatteryReading(){
 
 	return adjusted;
 }
+
+void shutDownADC(){
+	clr_ADCEN;
+}
