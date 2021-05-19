@@ -3,14 +3,14 @@
 
 
 /* MOTOR PINS */
-#define    M1A 		P17	// T2BO1 -> INA1 -> Timer 2B
-#define    M1B		P20 // T2BO2 -> INB1 -> Timer 2B
-#define    M2A		P15 // T2AO1 -> INA2 -> Timer 2A
-#define    M2B		P16 // T2AO2 -> INB2 -> Timer 2A
-#define    M3A		P30 // T2DO1 -> INA3 -> Timer 2D
-#define    M3B		P31 // T2DO2 -> INB3 -> Timer 2D
-#define    M4A		P26 // T2CO1 -> INA4 -> Timer 2C
-#define    M4B		P27 // T2CO2 -> INB4 -> Timer 2C
+#define    M2A 		P17	// T2BO1 -> INA1 -> Timer 2B
+#define    M2B		P20 // T2BO2 -> INB1 -> Timer 2B
+#define    M1A		P15 // T2AO1 -> INA2 -> Timer 2A
+#define    M1B		P16 // T2AO2 -> INB2 -> Timer 2A
+#define    M4A		P30 // T2DO1 -> INA3 -> Timer 2D
+#define    M4B		P31 // T2DO2 -> INB3 -> Timer 2D
+#define    M3A		P26 // T2CO1 -> INA4 -> Timer 2C
+#define    M3B		P27 // T2CO2 -> INB4 -> Timer 2C
 
 /*  MOTOR PINS GPIO MODE  */
 #define P15_QUASI_MODE    P1M1 &= ~SET_BIT5; P1M2 &= ~SET_BIT5;    // Timer 2A Output 1
