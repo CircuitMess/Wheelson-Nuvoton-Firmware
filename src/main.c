@@ -20,6 +20,8 @@ __far const struct i2cCommand Commands[] = {
 		{ 0x21, 0, backlightGet },
 		{ 0x22, 1, headlightSet },
 		{ 0x23, 0, headlightGet },
+		{ 0x24, 1, rgbSet},
+		{ 0x25, 0, rgbGet},
 		{ 0x30, 2, motorSet },
 		{ 0x31, 1, motorGet },
 		{ 0x40, 0, numEvents },
