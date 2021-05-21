@@ -9,6 +9,8 @@ void backlightSet(uint8_t* params);
 void backlightGet(uint8_t* params);
 void headlightSet(uint8_t* params);
 void headlightGet(uint8_t* params);
+void rgbSet(uint8_t* params);
+void rgbGet(uint8_t* params);
 void motorSet(uint8_t* params);
 void motorGet(uint8_t* params);
 void numEvents(uint8_t* params);

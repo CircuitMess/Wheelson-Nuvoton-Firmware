@@ -36,6 +36,15 @@ void headlightGet(uint8_t* params){
 	i2cRespond(data, sizeof(data));
 }
 
+void rgbSet(uint8_t* params){
+	setRGB(params[0]);
+}
+
+void rgbGet(uint8_t* params){
+	uint8_t data[] = { getRGB() };
+	i2cRespond(data, sizeof(data));
+}
+
 void motorSet(uint8_t* params){
 	setMotorState(params[0], ((int8_t*) params)[1]);
 }

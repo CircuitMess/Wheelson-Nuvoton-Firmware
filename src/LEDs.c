@@ -37,5 +37,5 @@ void setRGB(uint8_t _rgb){
 }
 uint32_t getRGB(){
 
-	return rgb;
+	return ~rgb & 0x07;
 }
