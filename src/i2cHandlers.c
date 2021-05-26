@@ -1,4 +1,6 @@
 #include <N76E616.h>
+#include <Define.h>
+#include <SFR_Macro.h>
 #include "i2cHandlers.h"
 #include "I2C.h"
 #include "io.h"
@@ -80,7 +82,10 @@ void shutdown(uint8_t* params){
 
 	TA = 0x0AA;
 	TA = 0x55;
-	BODCON0 &= 0xFB;	// turn off brown-out reset
+	BODCON0 &= 0xFB;
+
+	clr_EI2C;
+	clr_EA;
 
 	PCON |= 0x02;
 }
