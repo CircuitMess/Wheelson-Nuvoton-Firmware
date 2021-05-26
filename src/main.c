@@ -67,5 +67,6 @@ void main(void){
 		}
 
 		inputScan();
+		motorDriving();
 	}
 }
