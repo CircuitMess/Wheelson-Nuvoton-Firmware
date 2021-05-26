@@ -3,8 +3,16 @@
 #include "N76E616.h"
 #include "SFR_Macro.h"
 #include "Define.h"
+#include "bool.h"
 
-__far int8_t state[4] = {0};
+#define SLOW_START_TIME 25    // 25 -> 1ms
+
+//__far int8_t state[4] = {0,0,0,0};
+__far int8_t currentState[4] = {0,0,0,0};
+//__far int8_t nextState[4] = {0,0,0,0};
+__far int8_t targetState[4] = {0,0,0,0};
+__far int16_t deltaState[4] = {0,0,0,0};
+__far uint8_t deltaCounter[4] = {0,0,0,0};
 
 void motorInit(){
 
@@ -16,39 +24,43 @@ void motorInit(){
 	INIT_PWM2D();
 }
 
-void setMotorState(uint8_t id, int8_t s){
+void setMotor(uint8_t id, int8_t state){
+
+	if(id >= 2){
+		state *= -1;
+	}
+
+	targetState[id] = state;
+	deltaState[id] = targetState[id] - currentState[id];
+}
+
+void setMotorState(uint8_t id, int8_t state){
 
 	clr_EA;
 
-	if(id >= 2){
-		s *= -1;
-	}
-
-	state[id] = s;
+	currentState[id] = state;
 
 	switch(id){
 
 		case 0:
 			STOP_PWM2A();
 
-			if(state[id] == 0){
+			if(currentState[id] == 0){
 				R2AH = 0;
 				R2AL = 0;
 				M1_STOP();
 				break;
-			}
-			else if(state[id] < 0){
+			}else if(currentState[id] < 0){
 
-				float dutyCycleLow = (float)(-state[id])/128.0f;
+				float dutyCycleLow = (float) (-currentState[id]) / 127.0f;
 				float dutyCycleHigh = 1.0f - dutyCycleLow;
 				R2AL = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleLow);
 				R2AH = 255 - R2AL;
 				M1_BACKWARD();
 				START_PWM2A();
-			}
-			else if(state[id] > 0){
+			}else if(currentState[id] > 0){
 
-				float dutyCycleHigh = (float)state[id]/127.0f;
+				float dutyCycleHigh = (float) currentState[id] / 127.0f;
 				float dutyCycleLow = 1.0f - dutyCycleHigh;
 				R2AH = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleHigh);
 				R2AL = 255 - R2AH;
@@ -60,22 +72,20 @@ void setMotorState(uint8_t id, int8_t s){
 		case 1:
 			STOP_PWM2B();
 
-			if(state[id] == 0){
+			if(currentState[id] == 0){
 				R2BH = 0;
 				R2BL = 0;
 				M2_STOP();
-			}
-			else if(state[id] < 0){
-				float dutyCycleLow = (float)(-state[id])/128.0f;
+			}else if(currentState[id] < 0){
+				float dutyCycleLow = (float) (-currentState[id]) / 127.0f;
 				float dutyCycleHigh = 1.0f - dutyCycleLow;
 				R2BL = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleLow);
 				R2BH = 255 - R2BL;
 
 				M2_BACKWARD();
 				START_PWM2B();
-			}
-			else if(state[id] > 0){
-				float dutyCycleHigh = (float)state[id]/127.0f;
+			}else if(currentState[id] > 0){
+				float dutyCycleHigh = (float) currentState[id] / 127.0f;
 				float dutyCycleLow = 1.0f - dutyCycleHigh;
 				R2BH = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleHigh);
 				R2BL = 255 - R2BH;
@@ -87,24 +97,22 @@ void setMotorState(uint8_t id, int8_t s){
 		case 2:
 			STOP_PWM2C();
 
-			if(state[id] == 0){
+			if(currentState[id] == 0){
 				R2CH = 0;
 				R2CL = 0;
 				M3_STOP();
 				break;
-			}
-			else if(state[id] < 0){
+			}else if(currentState[id] < 0){
 
-				float dutyCycleLow = (float)(-state[id])/128.0f;
+				float dutyCycleLow = (float) (-currentState[id]) / 127.0f;
 				float dutyCycleHigh = 1.0f - dutyCycleLow;
 				R2CL = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleLow);
 				R2CH = 255 - R2CL;
 				M3_BACKWARD();
 				START_PWM2C();
-			}
-			else if(state[id] > 0){
+			}else if(currentState[id] > 0){
 
-				float dutyCycleHigh = (float)state[id]/127.0f;
+				float dutyCycleHigh = (float) currentState[id] / 127.0f;
 				float dutyCycleLow = 1.0f - dutyCycleHigh;
 				R2CH = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleHigh);
 				R2CL = 255 - R2CH;
@@ -117,21 +125,19 @@ void setMotorState(uint8_t id, int8_t s){
 		case 3:
 			STOP_PWM2D();
 
-			if(state[id] == 0){
+			if(currentState[id] == 0){
 				R2DH = 0;
 				R2DL = 0;
 				M4_STOP();
-			}
-			else if(state[id] < 0){
-				float dutyCycleLow = -(float)(state[id])/128.0f;
+			}else if(currentState[id] < 0){
+				float dutyCycleLow = -(float) (currentState[id]) / 127.0f;
 				float dutyCycleHigh = 1.0f - dutyCycleLow;
 				R2DL = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleLow);
 				R2DH = 255 - R2DL;
 				M4_BACKWARD();
 				START_PWM2D();
-			}
-			else if(state[id] > 0){
-				float dutyCycleHigh = (float)state[id]/127.0f;
+			}else if(currentState[id] > 0){
+				float dutyCycleHigh = (float) currentState[id] / 127.0f;
 				float dutyCycleLow = 1.0f - dutyCycleHigh;
 				R2DH = 140 + (uint8_t)((255.0f - 140.0f) * dutyCycleHigh);
 				R2DL = 255 - R2DH;
@@ -146,6 +152,30 @@ void setMotorState(uint8_t id, int8_t s){
 
 int8_t getMotorState(uint8_t id){
 
-	return state[id];
+	return currentState[id];
 }
 
+void motorDriving(){
+
+	for(int i = 0; i < 4; ++i){
+
+		if(deltaState[i] != 0){
+
+			++deltaCounter[i];
+
+			if(deltaState[i] <= 0 && deltaCounter[i] >= SLOW_START_TIME){
+				++deltaState[i];
+				setMotorState(i, (int16_t)targetState[i] - deltaState[i]);
+				deltaCounter[i] = 0;
+			}
+			else if(deltaState[i] >= 0 && deltaCounter[i] >= SLOW_START_TIME){
+				--deltaState[i];
+				setMotorState(i, (int16_t)targetState[i] - deltaState[i]);
+				deltaCounter[i] = 0;
+			}
+			else{
+				continue;
+			}
+		}
+	}
+}

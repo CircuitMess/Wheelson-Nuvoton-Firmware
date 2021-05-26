@@ -37,7 +37,7 @@ void headlightGet(uint8_t* params){
 }
 
 void motorSet(uint8_t* params){
-	setMotorState(params[0], ((int8_t*) params)[1]);
+	setMotor(params[0], ((int8_t*) params)[1]);
 }
 
 void motorGet(uint8_t* params){

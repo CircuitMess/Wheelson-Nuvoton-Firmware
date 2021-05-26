@@ -14,5 +14,7 @@ void motorInit();
 void setMotorState(uint8_t id, int8_t _state);
 int8_t getMotorState(uint8_t id);
 
+void setMotor(uint8_t id, int8_t _state);
+void motorDriving();
 
 #endif //WHEELSON_NUVOTON_FIRMWARE_MOTORS_H
