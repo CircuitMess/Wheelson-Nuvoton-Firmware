@@ -3,7 +3,6 @@
 #include <SFR_Macro.h>
 #include "i2cHandlers.h"
 #include "I2C.h"
-#include "io.h"
 #include "LEDs.h"
 #include "Motors.h"
 #include "Input.h"

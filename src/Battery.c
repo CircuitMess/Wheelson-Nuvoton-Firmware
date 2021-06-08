@@ -2,7 +2,6 @@
 #include <Define.h>
 #include <SFR_Macro.h>
 #include "Battery.h"
-#include "io.h"
 
 void batteryInit(){
 	// input-only pin mode
@@ -15,12 +14,11 @@ void batteryInit(){
 	// P0.0 (AIN0) Digital Input Disconnect
 	P0DIDS |= SET_BIT0;
 
-	set_ADCEN; // enable
-
+	// set_ADCEN; // enable
 }
 
 UINT16 getBatteryReading(){
-	//set_ADCEN; // enable
+	set_ADCEN; // enable
 	//ADCCON0 &= 0b11110000; // select pin
 
 	UINT32 reading = 0;
@@ -33,12 +31,12 @@ UINT16 getBatteryReading(){
 	}
 	reading /= 50;
 
-	UINT16 voltage = (float) reading * 1000.0f * 3.33f / 1023.0f;
+	UINT16 voltage = ((float) reading * 1000.0f * 3.33f / 1023.0f);
 
 	// adjust for voltage divider
-	UINT16 adjusted = 1.28149f * (0.0966667f + (float) voltage);
+	UINT16 adjusted = ((float) voltage * 1.26441f + 232.309f);
 
-	//clr_ADCEN;
+	clr_ADCEN;
 
 	return adjusted;
 }

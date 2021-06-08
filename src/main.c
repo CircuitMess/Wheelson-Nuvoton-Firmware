@@ -26,7 +26,7 @@ __far const struct i2cCommand Commands[] = {
 		{ 0x31, 1, motorGet },
 		{ 0x40, 0, numEvents },
 		{ 0x41, 1, events },
-		{ 0x50, 1, batteryLevel },
+		{ 0x50, 0, batteryLevel },
 		{ 0x51, 0, shutdown }
 };
 
@@ -38,7 +38,7 @@ void main(void){
 	inputInit();
 	LEDInit();
 	motorInit();
-	//batteryInit();
+	batteryInit();
 
 	i2cInit(Commands, sizeof(Commands) / sizeof(Commands[0]));
 
