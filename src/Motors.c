@@ -7,12 +7,9 @@
 
 #define SLOW_START_TIME 25    // 25 -> 1ms
 
-//__far int8_t state[4] = {0,0,0,0};
 __far int8_t currentState[4] = {0,0,0,0};
-//__far int8_t nextState[4] = {0,0,0,0};
 __far int8_t targetState[4] = {0,0,0,0};
-__far int16_t deltaState[4] = {0,0,0,0};
-__far uint8_t deltaCounter[4] = {0,0,0,0};
+__far uint8_t stateCounter[4] = {0,0,0,0};
 
 void motorInit(){
 
@@ -25,13 +22,11 @@ void motorInit(){
 }
 
 void setMotor(uint8_t id, int8_t state){
-
 	if(id >= 2){
 		state *= -1;
 	}
 
 	targetState[id] = state;
-	deltaState[id] = targetState[id] - currentState[id];
 }
 
 void setMotorState(uint8_t id, int8_t state){
@@ -156,26 +151,14 @@ int8_t getMotorState(uint8_t id){
 }
 
 void motorDriving(){
-
 	for(int i = 0; i < 4; ++i){
+		if(targetState[i] == currentState[i]) continue;
 
-		if(deltaState[i] != 0){
+		stateCounter[i]++;
 
-			++deltaCounter[i];
-
-			if(deltaState[i] <= 0 && deltaCounter[i] >= SLOW_START_TIME){
-				++deltaState[i];
-				setMotorState(i, (int16_t)targetState[i] - deltaState[i]);
-				deltaCounter[i] = 0;
-			}
-			else if(deltaState[i] >= 0 && deltaCounter[i] >= SLOW_START_TIME){
-				--deltaState[i];
-				setMotorState(i, (int16_t)targetState[i] - deltaState[i]);
-				deltaCounter[i] = 0;
-			}
-			else{
-				continue;
-			}
+		if(stateCounter[i] >= SLOW_START_TIME){
+			setMotorState(i, currentState[i] + (targetState[i] > currentState[i] ? 1 : -1));
+			stateCounter[i] = 0;
 		}
 	}
 }
