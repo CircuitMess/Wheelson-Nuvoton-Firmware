@@ -47,11 +47,11 @@ void rgbGet(uint8_t* params){
 }
 
 void motorSet(uint8_t* params){
-	setMotor(params[0], ((int8_t*) params)[1]);
+	setMotor(params[0], ((int8_t*) params)[1] * -1);
 }
 
 void motorGet(uint8_t* params){
-	int8_t data[] = { getMotorState(params[0]) };
+	int8_t data[] = { getMotorState(params[0]) * -1 };
 	i2cRespond(data, sizeof(data));
 }
 
