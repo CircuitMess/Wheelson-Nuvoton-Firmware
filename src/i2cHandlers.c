@@ -51,7 +51,7 @@ void motorSet(uint8_t* params){
 }
 
 void motorGet(uint8_t* params){
-	int8_t data[] = { getMotorState(params[0]) * -1 };
+	int8_t data[] = { getMotor(params[0]) * -1 };
 	i2cRespond(data, sizeof(data));
 }
 

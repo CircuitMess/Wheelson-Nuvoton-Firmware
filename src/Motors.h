@@ -11,9 +11,7 @@
 
 void motorInit();
 
-void setMotorState(uint8_t id, int8_t _state);
-int8_t getMotorState(uint8_t id);
-
+int8_t getMotor(uint8_t id);
 void setMotor(uint8_t id, int8_t _state);
 void motorDriving();
 

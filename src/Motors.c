@@ -31,6 +31,16 @@ void setMotor(uint8_t id, int8_t state){
 	targetState[id] = state;
 }
 
+int8_t getMotor(uint8_t id){
+	int8_t state = targetState[id];
+
+	if(id >= 2){
+		state *= -1;
+	}
+
+	return state;
+}
+
 void setMotorState(uint8_t id, int8_t state){
 
 	clr_EA;
@@ -145,11 +155,6 @@ void setMotorState(uint8_t id, int8_t state){
 	}
 
 	set_EA;
-}
-
-int8_t getMotorState(uint8_t id){
-
-	return currentState[id];
 }
 
 void motorDriving(){
