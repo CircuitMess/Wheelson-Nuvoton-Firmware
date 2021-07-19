@@ -8,7 +8,7 @@
 #define MAX_NODES 20
 
 #define BTN_NUM 6
-#define DEBOUNCE_TIME 500
+#define DEBOUNCE_TIME 300
 
 struct InputEvent{
 
